@@ -299,9 +299,9 @@
     {
       "outcomeId": "ci.stage.integration-test",
       "level": "default",
-      "source": "forge",
-      "value": "merge",
-      "status": "unchecked",
+      "source": "product",
+      "status": "not-applicable",
+      "reason": "Standalone CLI has no separately integrated service. Its command table drives real processes in mandatory boundary tests, and unit tests cover CLI behavior.",
       "enforcedBy": []
     },
     {
@@ -338,11 +338,10 @@
     {
       "outcomeId": "ci.provider",
       "level": "default",
-      "source": "forge",
+      "source": "product",
       "value": "github-actions",
       "status": "unchecked",
-      "enforcedBy": [],
-      "reason": "The default is github-actions: GitHub delivery is on and the repository binding holds a GitHub source URL."
+      "enforcedBy": []
     },
     {
       "outcomeId": "ci.dependency-scan.threshold",
