@@ -1,0 +1,4 @@
+syft {{ .descriptor.version }}
+subject {{ range .source.metadata.digests }}{{ .algorithm }}:{{ .value }}{{ end }}
+{{ range .artifacts }}part [{{ toJson .type }},{{ toJson .name }},{{ toJson .version }}]
+{{ end }}
