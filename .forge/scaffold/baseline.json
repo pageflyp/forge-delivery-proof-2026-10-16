@@ -301,7 +301,7 @@
       "level": "default",
       "source": "product",
       "status": "not-applicable",
-      "reason": "Standalone CLI has no separately integrated service. Its command table drives real processes in mandatory boundary tests, and unit tests cover CLI behavior.",
+      "reason": "This standalone CLI has no integrated service; boundary tests drive the real command.",
       "enforcedBy": []
     },
     {

@@ -7,8 +7,8 @@
     "contentHash": "sha256:a578ca76a24474d2612b53c66e6713768d431de97bab99d1061de328f37c6fb8"
   },
   "executorRegistryHash": "sha256:a3c93cc2cfd38b2cc747cb0ce79a07f4ff6c9a2506a98dbc825b58d47f0e4a06",
-  "ciProfileHash": "sha256:4ac22360c5a811548f5a67b2d5744c8cc076e88fc4daecd654bebf8d5a640cb7",
-  "commandCatalogueHash": "sha256:015cbd912d17ac065ab4e2ccf8e68f8a77096a34be24904a52d397d29a5a03f1",
+  "ciProfileHash": "sha256:1098e668683fc80da682db4c8c15878ba55255d7b8bbea07c8414644f4e2b758",
+  "commandCatalogueHash": "sha256:2c8353b758446e12fb635ffa66ec811fefba3af357762dc3156d3a149a7698c5",
   "modes": {
     "integration_wave": {
       "criteria": [
@@ -255,5 +255,5 @@
       ]
     }
   },
-  "contentHash": "sha256:e9f29cb6c9f7e9b5227b762a5281ee6a558be5cf152fb7104b31ffac40fad597"
+  "contentHash": "sha256:3177a07952314ed024210b1a663c11166e0e77847ef3f48b746f5be71e446024"
 }

@@ -61,7 +61,7 @@ Forge wrote this file from its record of this release. Each standard is one laye
 
 ### Exclusions
 
-- `ci.stage.integration-test`: Standalone CLI has no separately integrated service. Its command table drives real processes in mandatory boundary tests, and unit tests cover CLI behavior.
+- `ci.stage.integration-test`: This standalone CLI has no integrated service; boundary tests drive the real command.
 - `runtime.http-errors.problem-details`: No selected component has the kind api or web and the placement target kind runtime.
 - `runtime.health.ready`: No selected component has the kind api or web or worker and the placement target kind runtime.
 - `runtime.logs.structured`: No selected component has the kind api or web or worker and the placement target kind runtime.
