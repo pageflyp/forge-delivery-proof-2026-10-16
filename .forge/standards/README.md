@@ -46,7 +46,6 @@ Forge wrote this file from its record of this release. Each standard is one laye
 - `quality.build.succeeds` (required): `command:cli.build`
 - `ci.stage.static-checks` (required): none; the item is unbound
 - `ci.stage.build` (required): none; the item is unbound
-- `ci.stage.integration-test` (default): none; the item is unchecked
 - `ci.stage.end-to-end-test` (default): none; the item is unchecked
 - `ci.stage.code-security` (required): none; the item is unbound
 - `ci.stage.supply-chain` (required): none; the item is unbound
@@ -62,6 +61,7 @@ Forge wrote this file from its record of this release. Each standard is one laye
 
 ### Exclusions
 
+- `ci.stage.integration-test`: Standalone CLI has no separately integrated service. Its command table drives real processes in mandatory boundary tests, and unit tests cover CLI behavior.
 - `runtime.http-errors.problem-details`: No selected component has the kind api or web and the placement target kind runtime.
 - `runtime.health.ready`: No selected component has the kind api or web or worker and the placement target kind runtime.
 - `runtime.logs.structured`: No selected component has the kind api or web or worker and the placement target kind runtime.

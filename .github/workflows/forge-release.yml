@@ -256,36 +256,6 @@ jobs:
         env:
           FORGE_CI_COMMAND: eyJpZCI6ImNsaS5idWlsZCIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImJ1aWxkIiwic3JjL2NsaS50cyIsIi0tb3V0ZGlyIiwiZGlzdCIsIi0tdGFyZ2V0IiwiYnVuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6OTAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MjA0OCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
           FORGE_CI_PROFILE: release
-  integration-test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    needs:
-      - validate-commit
-      - build
-    steps:
-      - name: Check out exact source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          ref: ${{ inputs.commit }}
-      - name: Create isolated toolchain directory
-        env:
-          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
-        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
-      - name: Set up accepted toolchain
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
-        with:
-          version: 2026.10.12
-          cache: false
-          add_shims_to_path: false
-          working_directory: ${{ runner.temp }}/forge-toolchain
-        env:
-          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
-          MISE_NO_AUTO_INSTALL: "1"
-          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
-      - name: "integration-test: unanswered pipeline stage"
-        run: echo "Forge has no complete command answer for this stage" >&2; exit 1
   end-to-end-test:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -414,7 +384,6 @@ jobs:
       - static-checks
       - unit-test
       - build
-      - integration-test
       - end-to-end-test
       - code-security
       - supply-chain
