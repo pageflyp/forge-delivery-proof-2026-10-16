@@ -1,20 +1,20 @@
 {
-  "id": "7db4e9be-fce2-4163-82c7-05f690da466c",
-  "releaseId": "3e03f755-7533-4eae-920e-bf3fb1c4748d",
+  "id": "3f6ef6ab-38ee-44a0-882f-5efdb9873c19",
+  "releaseId": "bd77d371-81ad-477f-a84e-a05a35e088ac",
   "revision": 1,
   "status": "accepted",
   "policyRevision": "component-stack-validation@1",
   "policyHash": "sha256:2905850bd55ffab69e929607dba0cf7d2891c208b5d73abd2b9cf37d098d9c6d",
-  "contentHash": "sha256:d8842b417d2dc4feb4709b6a6d5fb5d483bd271e4c7e51027583672363945816",
+  "contentHash": "sha256:10a73d7e1046cff373ab1bbdc90dcb0a2acc1fd005f347dcefda65dfa77b62d1",
   "supersedesRevisionId": null,
   "provenance": {
     "kind": "brownfield-discovery",
-    "ref": "import-commit:417a73b6-5520-4d73-b9f8-61c82a86c1cb:64af66719d5227bc6c42bd5abbf90a5a6570b971",
-    "contentHash": "sha256:4693cbcb07e5ea67be68709d228496789d829a00970c3a9f25986c35ef8dcf79"
+    "ref": "import-commit:760d3535-ee18-4b0d-986f-7d8ad69e3cf7:ff406751d0afab5c7bbea5d8f1846a8a5535fe68",
+    "contentHash": "sha256:a5beaa5faecaaf66733f9f6bdc800a1c3cc82ad973114c5e4885b52c39e7b741"
   },
   "commands": [
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.format-check",
@@ -83,7 +83,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.lint",
@@ -149,7 +149,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.type-check",
@@ -213,7 +213,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.unit",
@@ -277,7 +277,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.coverage",
@@ -352,7 +352,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.code-scan",
@@ -418,7 +418,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.boundary",
@@ -487,7 +487,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.build",
@@ -551,7 +551,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.package",
@@ -601,7 +601,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.dependency-scan",
@@ -672,7 +672,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.bill-of-materials",
@@ -725,7 +725,7 @@
       }
     },
     {
-      "componentProfileId": "component:3e03f755-7533-4eae-920e-bf3fb1c4748d:cli",
+      "componentProfileId": "component:bd77d371-81ad-477f-a84e-a05a35e088ac:cli",
       "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
       "command": {
         "id": "cli.provenance",

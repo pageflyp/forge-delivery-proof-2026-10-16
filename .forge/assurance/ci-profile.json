@@ -1,14 +1,14 @@
 {
-  "id": "e25b83b3-b041-4a0d-8b75-a95bc41d3e64",
-  "releaseId": "3e03f755-7533-4eae-920e-bf3fb1c4748d",
+  "id": "bb6b69d9-1f34-4243-8445-fe29ab2cb834",
+  "releaseId": "bd77d371-81ad-477f-a84e-a05a35e088ac",
   "revision": 1,
   "status": "accepted",
-  "contentHash": "sha256:8ccb82c59a227e3b3420c852061f4f057c3339fb5aa73671ac8249a0e155881c",
+  "contentHash": "sha256:1098e668683fc80da682db4c8c15878ba55255d7b8bbea07c8414644f4e2b758",
   "supersedesRevisionId": null,
   "provenance": {
     "kind": "brownfield-discovery",
-    "ref": "import-commit:417a73b6-5520-4d73-b9f8-61c82a86c1cb:64af66719d5227bc6c42bd5abbf90a5a6570b971",
-    "contentHash": "sha256:4693cbcb07e5ea67be68709d228496789d829a00970c3a9f25986c35ef8dcf79"
+    "ref": "import-commit:760d3535-ee18-4b0d-986f-7d8ad69e3cf7:ff406751d0afab5c7bbea5d8f1846a8a5535fe68",
+    "contentHash": "sha256:a5beaa5faecaaf66733f9f6bdc800a1c3cc82ad973114c5e4885b52c39e7b741"
   },
   "profiles": [
     {
