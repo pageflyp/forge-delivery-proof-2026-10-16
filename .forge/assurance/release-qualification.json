@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb",
+  "qualificationProfile": {
+    "id": "a0000000-0000-4000-8000-000000000412",
+    "revision": 1,
+    "contentHash": "sha256:a578ca76a24474d2612b53c66e6713768d431de97bab99d1061de328f37c6fb8"
+  },
+  "executorRegistryHash": "sha256:a3c93cc2cfd38b2cc747cb0ce79a07f4ff6c9a2506a98dbc825b58d47f0e4a06",
+  "ciProfileHash": "sha256:7d21117c0038a88cbefecba149e0ba100a9bb574bff2bb5e31bba281be388dfd",
+  "commandCatalogueHash": "sha256:c3e401739559a513064d72038f38684f28998b25b96c504a5c709c6ed2825acd",
+  "modes": {
+    "integration_wave": {
+      "criteria": [
+        {
+          "id": "forge-release-requirement",
+          "source": "release_requirement",
+          "subject": "source_tree",
+          "description": "Declared release requirements pass.",
+          "applicableModes": [
+            "final_release",
+            "integration_wave"
+          ],
+          "contentHash": "sha256:1db20b1ee2b871bf80448089c443413aaab6af5448592bf31e289e6d3a83bc5b"
+        },
+        {
+          "id": "forge-preservation-baseline",
+          "source": "preservation",
+          "subject": "source_tree",
+          "description": "Accepted behavior remains passing.",
+          "applicableModes": [
+            "final_release",
+            "integration_wave"
+          ],
+          "contentHash": "sha256:10f405c138bd0eda1eadb5fe8feb0badf592fd1a62f77abfd2e31c53acf6b2a5"
+        },
+        {
+          "id": "forge-specialist-security",
+          "source": "specialist",
+          "subject": "source_tree",
+          "description": "Declared security checks pass.",
+          "applicableModes": [
+            "final_release",
+            "integration_wave"
+          ],
+          "contentHash": "sha256:ac81dedf7405a14f50f32ac7aa1a5ef766f00276f8693b87fe9b424331d53e55"
+        }
+      ],
+      "commandProfileIds": [
+        "release"
+      ],
+      "commandCriteria": [
+        {
+          "commandId": "cli.format-check",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.lint",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.type-check",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.unit",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.coverage",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.code-scan",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.boundary",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.build",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.dependency-scan",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "forge-release.secret-scan",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        }
+      ]
+    },
+    "final_release": {
+      "criteria": [
+        {
+          "id": "forge-release-requirement",
+          "source": "release_requirement",
+          "subject": "source_tree",
+          "description": "Declared release requirements pass.",
+          "applicableModes": [
+            "final_release",
+            "integration_wave"
+          ],
+          "contentHash": "sha256:1db20b1ee2b871bf80448089c443413aaab6af5448592bf31e289e6d3a83bc5b"
+        },
+        {
+          "id": "forge-preservation-baseline",
+          "source": "preservation",
+          "subject": "source_tree",
+          "description": "Accepted behavior remains passing.",
+          "applicableModes": [
+            "final_release",
+            "integration_wave"
+          ],
+          "contentHash": "sha256:10f405c138bd0eda1eadb5fe8feb0badf592fd1a62f77abfd2e31c53acf6b2a5"
+        },
+        {
+          "id": "forge-specialist-security",
+          "source": "specialist",
+          "subject": "source_tree",
+          "description": "Declared security checks pass.",
+          "applicableModes": [
+            "final_release",
+            "integration_wave"
+          ],
+          "contentHash": "sha256:ac81dedf7405a14f50f32ac7aa1a5ef766f00276f8693b87fe9b424331d53e55"
+        }
+      ],
+      "commandProfileIds": [
+        "release"
+      ],
+      "commandCriteria": [
+        {
+          "commandId": "cli.format-check",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.lint",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.type-check",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.unit",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.coverage",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.code-scan",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.boundary",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.build",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "cli.dependency-scan",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        },
+        {
+          "commandId": "forge-release.secret-scan",
+          "criterionIds": [
+            "forge-release-requirement",
+            "forge-preservation-baseline",
+            "forge-specialist-security"
+          ]
+        }
+      ]
+    }
+  },
+  "contentHash": "sha256:bd2df59ff33b78bcae53df744b33da5e2186d55013433afe15255379160d9c11"
+}

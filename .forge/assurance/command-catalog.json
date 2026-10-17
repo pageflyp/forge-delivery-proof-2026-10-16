@@ -1,0 +1,846 @@
+{
+  "id": "7ea7debc-77db-43c7-8210-b43467bcfec6",
+  "releaseId": "0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb",
+  "revision": 1,
+  "status": "accepted",
+  "policyRevision": "component-stack-validation@1",
+  "policyHash": "sha256:2905850bd55ffab69e929607dba0cf7d2891c208b5d73abd2b9cf37d098d9c6d",
+  "contentHash": "sha256:a6d5379df6993de49bf7e227a3dba153bf0459484841cbc55c638410bc2f8dec",
+  "supersedesRevisionId": null,
+  "provenance": {
+    "kind": "brownfield-discovery",
+    "ref": "import-commit:12d675a7-294f-46de-b2ca-0e838b7c16b6:c91a147b1d3c5ecd0c1790162569e93c62fe59e2",
+    "contentHash": "sha256:be65344f924f742e02a49042bb34e3d3b28bbb15b69cde971f9aae9e1ae5c229"
+  },
+  "commands": [
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.format-check",
+        "executable": "bun",
+        "argv": [
+          "x",
+          "prettier",
+          "--check",
+          "."
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 300000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 512,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 65536
+        },
+        "profiles": [
+          "edit",
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ],
+        "fixArgv": [
+          "x",
+          "prettier",
+          "--write",
+          "--ignore-unknown"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.lint",
+        "executable": "bun",
+        "argv": [
+          "x",
+          "eslint",
+          "--config",
+          "eslint.config.js",
+          ".",
+          "--max-warnings",
+          "0"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 300000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 512,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 65536
+        },
+        "profiles": [
+          "edit",
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.type-check",
+        "executable": "bun",
+        "argv": [
+          "x",
+          "tsc",
+          "--noEmit",
+          "--project",
+          "tsconfig.json"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 300000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 1024,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 65536
+        },
+        "profiles": [
+          "edit",
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.unit",
+        "executable": "bun",
+        "argv": [
+          "test"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 300000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 512,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 65536
+        },
+        "profiles": [
+          "edit",
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ],
+        "argumentPolicy": {
+          "maxArgs": 16,
+          "allowedPathKind": "repository-test-file"
+        }
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.coverage",
+        "executable": "bun",
+        "argv": [
+          ".forge/checks/coverage-floor.ts",
+          "--floor",
+          "0.9",
+          "--report",
+          "coverage/lcov.info",
+          "--source-root",
+          "src",
+          "--source-pattern",
+          "**/*.ts",
+          "--exclude",
+          "**/*.d.ts",
+          "--",
+          "bun",
+          "test",
+          "--coverage",
+          "--coverage-reporter=lcov",
+          "--coverage-dir=coverage"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 300000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 512,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 65536
+        },
+        "profiles": [
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.code-scan",
+        "executable": "bun",
+        "argv": [
+          "x",
+          "eslint",
+          "--config",
+          ".forge/checks/eslint-security.config.js",
+          "--no-inline-config",
+          "--max-warnings",
+          "0",
+          "."
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 600000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 1024,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.boundary",
+        "executable": "bun",
+        "argv": [
+          ".forge/checks/cli-boundary/cli-runner.mjs",
+          ".forge/checks/cli-boundary/cli-matrix.json",
+          "test/cli-boundary.json",
+          "."
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 300000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 512,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 65536
+        },
+        "profiles": [
+          "edit",
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ],
+        "appliesOnceProductFiles": [
+          {
+            "path": "test/cli-boundary.json",
+            "name": "command table"
+          }
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.build",
+        "executable": "bun",
+        "argv": [
+          "build",
+          "src/cli.ts",
+          "--outdir",
+          "dist",
+          "--target",
+          "bun"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "bun",
+          "argv": [
+            "install",
+            "--frozen-lockfile"
+          ],
+          "manifests": [
+            "package.json"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 900000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 2048,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.package",
+        "executable": "git",
+        "argv": [
+          "archive",
+          "--format=zip",
+          "--output=forge-package.zip",
+          "HEAD",
+          "."
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": true,
+          "external": false
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 1800000,
+        "sideEffectClass": "workspace-write",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 4096,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "artifact"
+        ],
+        "artifactPath": "forge-package.zip"
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.dependency-scan",
+        "executable": "node",
+        "argv": [
+          ".forge/checks/dependency-scan.mjs",
+          "judge",
+          "--lockfile",
+          "bun.lock",
+          "--fail-on",
+          "high"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "preparation": {
+          "network": true,
+          "executable": "node",
+          "argv": [
+            "--use-system-ca",
+            ".forge/checks/dependency-scan.mjs",
+            "fetch",
+            "--lockfile",
+            "bun.lock"
+          ],
+          "networkHosts": [
+            "osv-vulnerabilities.storage.googleapis.com"
+          ]
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 600000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 1024,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ],
+        "sandboxMemoryMiB": 1024,
+        "baseFiles": [
+          "bun.lock"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.bill-of-materials",
+        "executable": "syft",
+        "argv": [
+          "scan",
+          "-c",
+          ".forge/checks/syft.yaml",
+          "file:forge-package.zip",
+          "-o",
+          "template",
+          "-t",
+          ".forge/checks/syft-bill-of-materials.tmpl",
+          "-q"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 1800000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 4096,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "artifact"
+        ]
+      }
+    },
+    {
+      "componentProfileId": "component:0eae2bb3-7fb1-4e83-9f51-4d255c92a1bb:cli",
+      "stackProfileRevisionId": "019f0000-0000-7000-8000-000000000013",
+      "command": {
+        "id": "cli.provenance",
+        "executable": "cosign",
+        "argv": [
+          "attest-blob",
+          "--key",
+          "env://FORGE_SIGNING_KEY",
+          "--predicate",
+          ".forge/provenance/cli.package.predicate.json",
+          "--type",
+          "slsaprovenance1",
+          "--signing-config",
+          ".forge/checks/cosign-signing-config.json",
+          "--bundle",
+          ".forge/provenance/cli.package.bundle.json",
+          "--yes",
+          "forge-package.zip"
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 1800000,
+        "sideEffectClass": "local-runtime",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 4096,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "artifact"
+        ]
+      }
+    },
+    {
+      "command": {
+        "id": "forge-release.secret-scan",
+        "executable": "gitleaks",
+        "argv": [
+          "dir",
+          "-c",
+          ".forge/checks/gitleaks.toml",
+          "--ignore-gitleaks-allow",
+          "--redact",
+          "--no-banner",
+          "--no-color",
+          "--exit-code",
+          "1",
+          "-f",
+          "template",
+          "--report-template",
+          ".forge/checks/gitleaks-report.tmpl",
+          "-r",
+          "-",
+          "."
+        ],
+        "workingDirectory": {
+          "base": "workspace",
+          "relativePath": "."
+        },
+        "environmentClass": "trusted-host",
+        "permissions": {
+          "docker": false,
+          "browser": false,
+          "network": false,
+          "loopback": false,
+          "workspaceWrite": false,
+          "external": false
+        },
+        "allowedEnvNames": [],
+        "requiredSecretReferenceNames": [],
+        "hardTimeoutMs": 600000,
+        "sideEffectClass": "read-only",
+        "resourceVector": {
+          "cpuWeight": 1,
+          "memoryMiB": 1024,
+          "ioWeight": 1,
+          "dockerWeight": 0,
+          "browserSlots": 0,
+          "liveModelSlots": 0
+        },
+        "evidence": {
+          "captureStdout": true,
+          "captureStderr": true,
+          "redaction": "secrets-and-credentials",
+          "maxOutputBytes": 262144
+        },
+        "profiles": [
+          "change",
+          "merge",
+          "nightly",
+          "release"
+        ]
+      }
+    }
+  ]
+}

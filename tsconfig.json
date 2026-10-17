@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.product.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "strictBuiltinIteratorReturn": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "noCheck": false,
+    "noEmit": true
+  }
+}

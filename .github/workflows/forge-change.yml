@@ -1,0 +1,326 @@
+# Forge owns this file. Do not edit.
+name: Forge change
+on:
+  pull_request: {}
+  merge_group: {}
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create isolated toolchain directory
+        env:
+          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
+        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
+      - name: Set up accepted toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        with:
+          version: 2026.10.12
+          cache: false
+          add_shims_to_path: false
+          working_directory: ${{ runner.temp }}/forge-toolchain
+        env:
+          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
+          MISE_NO_AUTO_INSTALL: "1"
+          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
+      - name: "prepare: cli: cli.format-check"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5mb3JtYXQtY2hlY2siLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJ4IiwicHJldHRpZXIiLCItLWNoZWNrIiwiLiJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjUxMiwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjY1NTM2fSwicHJvZmlsZXMiOlsiZWRpdCIsImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwiZml4QXJndiI6WyJ4IiwicHJldHRpZXIiLCItLXdyaXRlIiwiLS1pZ25vcmUtdW5rbm93biJdfQ==
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.lint"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5saW50IiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsieCIsImVzbGludCIsIi0tY29uZmlnIiwiZXNsaW50LmNvbmZpZy5qcyIsIi4iLCItLW1heC13YXJuaW5ncyIsIjAiXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl19
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.type-check"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS50eXBlLWNoZWNrIiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsieCIsInRzYyIsIi0tbm9FbWl0IiwiLS1wcm9qZWN0IiwidHNjb25maWcuanNvbiJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjEwMjQsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl19
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.unit"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS51bml0IiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsidGVzdCJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjUxMiwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjY1NTM2fSwicHJvZmlsZXMiOlsiZWRpdCIsImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwiYXJndW1lbnRQb2xpY3kiOnsibWF4QXJncyI6MTYsImFsbG93ZWRQYXRoS2luZCI6InJlcG9zaXRvcnktdGVzdC1maWxlIn19
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.coverage"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5jb3ZlcmFnZSIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbIi5mb3JnZS9jaGVja3MvY292ZXJhZ2UtZmxvb3IudHMiLCItLWZsb29yIiwiMC45IiwiLS1yZXBvcnQiLCJjb3ZlcmFnZS9sY292LmluZm8iLCItLXNvdXJjZS1yb290Iiwic3JjIiwiLS1zb3VyY2UtcGF0dGVybiIsIioqLyoudHMiLCItLWV4Y2x1ZGUiLCIqKi8qLmQudHMiLCItLSIsImJ1biIsInRlc3QiLCItLWNvdmVyYWdlIiwiLS1jb3ZlcmFnZS1yZXBvcnRlcj1sY292IiwiLS1jb3ZlcmFnZS1kaXI9Y292ZXJhZ2UiXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.code-scan"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5jb2RlLXNjYW4iLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJ4IiwiZXNsaW50IiwiLS1jb25maWciLCIuZm9yZ2UvY2hlY2tzL2VzbGludC1zZWN1cml0eS5jb25maWcuanMiLCItLW5vLWlubGluZS1jb25maWciLCItLW1heC13YXJuaW5ncyIsIjAiLCIuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.boundary"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5ib3VuZGFyeSIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbIi5mb3JnZS9jaGVja3MvY2xpLWJvdW5kYXJ5L2NsaS1ydW5uZXIubWpzIiwiLmZvcmdlL2NoZWNrcy9jbGktYm91bmRhcnkvY2xpLW1hdHJpeC5qc29uIiwidGVzdC9jbGktYm91bmRhcnkuanNvbiIsIi4iXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl0sImFwcGxpZXNPbmNlUHJvZHVjdEZpbGVzIjpbeyJwYXRoIjoidGVzdC9jbGktYm91bmRhcnkuanNvbiIsIm5hbWUiOiJjb21tYW5kIHRhYmxlIn1dfQ==
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.build"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5idWlsZCIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImJ1aWxkIiwic3JjL2NsaS50cyIsIi0tb3V0ZGlyIiwiZGlzdCIsIi0tdGFyZ2V0IiwiYnVuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6OTAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MjA0OCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: prepare
+      - name: "prepare: cli: cli.dependency-scan"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5kZXBlbmRlbmN5LXNjYW4iLCJleGVjdXRhYmxlIjoibm9kZSIsImFyZ3YiOlsiLmZvcmdlL2NoZWNrcy9kZXBlbmRlbmN5LXNjYW4ubWpzIiwianVkZ2UiLCItLWxvY2tmaWxlIiwiYnVuLmxvY2siLCItLWZhaWwtb24iLCJoaWdoIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJub2RlIiwiYXJndiI6WyItLXVzZS1zeXN0ZW0tY2EiLCIuZm9yZ2UvY2hlY2tzL2RlcGVuZGVuY3ktc2Nhbi5tanMiLCJmZXRjaCIsIi0tbG9ja2ZpbGUiLCJidW4ubG9jayJdLCJuZXR3b3JrSG9zdHMiOlsib3N2LXZ1bG5lcmFiaWxpdGllcy5zdG9yYWdlLmdvb2dsZWFwaXMuY29tIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwic2FuZGJveE1lbW9yeU1pQiI6MTAyNCwiYmFzZUZpbGVzIjpbImJ1bi5sb2NrIl19
+          FORGE_CI_PROFILE: prepare
+      - name: Retain scan reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: forge-change-prepare
+          path: .forge/ci-evidence/reports/
+          if-no-files-found: ignore
+          retention-days: 7
+  static-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    needs:
+      - prepare
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create isolated toolchain directory
+        env:
+          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
+        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
+      - name: Set up accepted toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        with:
+          version: 2026.10.12
+          cache: false
+          add_shims_to_path: false
+          working_directory: ${{ runner.temp }}/forge-toolchain
+        env:
+          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
+          MISE_NO_AUTO_INSTALL: "1"
+          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
+      - name: "prepare: cli: cli.format-check"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5mb3JtYXQtY2hlY2siLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJ4IiwicHJldHRpZXIiLCItLWNoZWNrIiwiLiJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjUxMiwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjY1NTM2fSwicHJvZmlsZXMiOlsiZWRpdCIsImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwiZml4QXJndiI6WyJ4IiwicHJldHRpZXIiLCItLXdyaXRlIiwiLS1pZ25vcmUtdW5rbm93biJdfQ==
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.format-check"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5mb3JtYXQtY2hlY2siLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJ4IiwicHJldHRpZXIiLCItLWNoZWNrIiwiLiJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjUxMiwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjY1NTM2fSwicHJvZmlsZXMiOlsiZWRpdCIsImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwiZml4QXJndiI6WyJ4IiwicHJldHRpZXIiLCItLXdyaXRlIiwiLS1pZ25vcmUtdW5rbm93biJdfQ==
+          FORGE_CI_PROFILE: change
+      - name: "prepare: cli: cli.lint"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5saW50IiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsieCIsImVzbGludCIsIi0tY29uZmlnIiwiZXNsaW50LmNvbmZpZy5qcyIsIi4iLCItLW1heC13YXJuaW5ncyIsIjAiXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl19
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.lint"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5saW50IiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsieCIsImVzbGludCIsIi0tY29uZmlnIiwiZXNsaW50LmNvbmZpZy5qcyIsIi4iLCItLW1heC13YXJuaW5ncyIsIjAiXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl19
+          FORGE_CI_PROFILE: change
+      - name: "prepare: cli: cli.type-check"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS50eXBlLWNoZWNrIiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsieCIsInRzYyIsIi0tbm9FbWl0IiwiLS1wcm9qZWN0IiwidHNjb25maWcuanNvbiJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjEwMjQsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl19
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.type-check"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS50eXBlLWNoZWNrIiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsieCIsInRzYyIsIi0tbm9FbWl0IiwiLS1wcm9qZWN0IiwidHNjb25maWcuanNvbiJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjEwMjQsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl19
+          FORGE_CI_PROFILE: change
+  unit-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    needs:
+      - prepare
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create isolated toolchain directory
+        env:
+          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
+        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
+      - name: Set up accepted toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        with:
+          version: 2026.10.12
+          cache: false
+          add_shims_to_path: false
+          working_directory: ${{ runner.temp }}/forge-toolchain
+        env:
+          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
+          MISE_NO_AUTO_INSTALL: "1"
+          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
+      - name: "prepare: cli: cli.unit"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS51bml0IiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsidGVzdCJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjUxMiwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjY1NTM2fSwicHJvZmlsZXMiOlsiZWRpdCIsImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwiYXJndW1lbnRQb2xpY3kiOnsibWF4QXJncyI6MTYsImFsbG93ZWRQYXRoS2luZCI6InJlcG9zaXRvcnktdGVzdC1maWxlIn19
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.unit"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS51bml0IiwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsidGVzdCJdLCJ3b3JraW5nRGlyZWN0b3J5Ijp7ImJhc2UiOiJ3b3Jrc3BhY2UiLCJyZWxhdGl2ZVBhdGgiOiIuIn0sImVudmlyb25tZW50Q2xhc3MiOiJ0cnVzdGVkLWhvc3QiLCJwZXJtaXNzaW9ucyI6eyJkb2NrZXIiOmZhbHNlLCJicm93c2VyIjpmYWxzZSwibmV0d29yayI6ZmFsc2UsImxvb3BiYWNrIjpmYWxzZSwid29ya3NwYWNlV3JpdGUiOmZhbHNlLCJleHRlcm5hbCI6ZmFsc2V9LCJwcmVwYXJhdGlvbiI6eyJuZXR3b3JrIjp0cnVlLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJpbnN0YWxsIiwiLS1mcm96ZW4tbG9ja2ZpbGUiXSwibWFuaWZlc3RzIjpbInBhY2thZ2UuanNvbiJdfSwiYWxsb3dlZEVudk5hbWVzIjpbXSwicmVxdWlyZWRTZWNyZXRSZWZlcmVuY2VOYW1lcyI6W10sImhhcmRUaW1lb3V0TXMiOjMwMDAwMCwic2lkZUVmZmVjdENsYXNzIjoicmVhZC1vbmx5IiwicmVzb3VyY2VWZWN0b3IiOnsiY3B1V2VpZ2h0IjoxLCJtZW1vcnlNaUIiOjUxMiwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjY1NTM2fSwicHJvZmlsZXMiOlsiZWRpdCIsImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwiYXJndW1lbnRQb2xpY3kiOnsibWF4QXJncyI6MTYsImFsbG93ZWRQYXRoS2luZCI6InJlcG9zaXRvcnktdGVzdC1maWxlIn19
+          FORGE_CI_PROFILE: change
+      - name: "prepare: cli: cli.coverage"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5jb3ZlcmFnZSIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbIi5mb3JnZS9jaGVja3MvY292ZXJhZ2UtZmxvb3IudHMiLCItLWZsb29yIiwiMC45IiwiLS1yZXBvcnQiLCJjb3ZlcmFnZS9sY292LmluZm8iLCItLXNvdXJjZS1yb290Iiwic3JjIiwiLS1zb3VyY2UtcGF0dGVybiIsIioqLyoudHMiLCItLWV4Y2x1ZGUiLCIqKi8qLmQudHMiLCItLSIsImJ1biIsInRlc3QiLCItLWNvdmVyYWdlIiwiLS1jb3ZlcmFnZS1yZXBvcnRlcj1sY292IiwiLS1jb3ZlcmFnZS1kaXI9Y292ZXJhZ2UiXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.coverage"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5jb3ZlcmFnZSIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbIi5mb3JnZS9jaGVja3MvY292ZXJhZ2UtZmxvb3IudHMiLCItLWZsb29yIiwiMC45IiwiLS1yZXBvcnQiLCJjb3ZlcmFnZS9sY292LmluZm8iLCItLXNvdXJjZS1yb290Iiwic3JjIiwiLS1zb3VyY2UtcGF0dGVybiIsIioqLyoudHMiLCItLWV4Y2x1ZGUiLCIqKi8qLmQudHMiLCItLSIsImJ1biIsInRlc3QiLCItLWNvdmVyYWdlIiwiLS1jb3ZlcmFnZS1yZXBvcnRlcj1sY292IiwiLS1jb3ZlcmFnZS1kaXI9Y292ZXJhZ2UiXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: change
+      - name: "prepare: cli: cli.boundary"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5ib3VuZGFyeSIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbIi5mb3JnZS9jaGVja3MvY2xpLWJvdW5kYXJ5L2NsaS1ydW5uZXIubWpzIiwiLmZvcmdlL2NoZWNrcy9jbGktYm91bmRhcnkvY2xpLW1hdHJpeC5qc29uIiwidGVzdC9jbGktYm91bmRhcnkuanNvbiIsIi4iXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl0sImFwcGxpZXNPbmNlUHJvZHVjdEZpbGVzIjpbeyJwYXRoIjoidGVzdC9jbGktYm91bmRhcnkuanNvbiIsIm5hbWUiOiJjb21tYW5kIHRhYmxlIn1dfQ==
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.boundary"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5ib3VuZGFyeSIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbIi5mb3JnZS9jaGVja3MvY2xpLWJvdW5kYXJ5L2NsaS1ydW5uZXIubWpzIiwiLmZvcmdlL2NoZWNrcy9jbGktYm91bmRhcnkvY2xpLW1hdHJpeC5qc29uIiwidGVzdC9jbGktYm91bmRhcnkuanNvbiIsIi4iXSwid29ya2luZ0RpcmVjdG9yeSI6eyJiYXNlIjoid29ya3NwYWNlIiwicmVsYXRpdmVQYXRoIjoiLiJ9LCJlbnZpcm9ubWVudENsYXNzIjoidHJ1c3RlZC1ob3N0IiwicGVybWlzc2lvbnMiOnsiZG9ja2VyIjpmYWxzZSwiYnJvd3NlciI6ZmFsc2UsIm5ldHdvcmsiOmZhbHNlLCJsb29wYmFjayI6ZmFsc2UsIndvcmtzcGFjZVdyaXRlIjpmYWxzZSwiZXh0ZXJuYWwiOmZhbHNlfSwicHJlcGFyYXRpb24iOnsibmV0d29yayI6dHJ1ZSwiZXhlY3V0YWJsZSI6ImJ1biIsImFyZ3YiOlsiaW5zdGFsbCIsIi0tZnJvemVuLWxvY2tmaWxlIl0sIm1hbmlmZXN0cyI6WyJwYWNrYWdlLmpzb24iXX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjozMDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjo1MTIsImlvV2VpZ2h0IjoxLCJkb2NrZXJXZWlnaHQiOjAsImJyb3dzZXJTbG90cyI6MCwibGl2ZU1vZGVsU2xvdHMiOjB9LCJldmlkZW5jZSI6eyJjYXB0dXJlU3Rkb3V0Ijp0cnVlLCJjYXB0dXJlU3RkZXJyIjp0cnVlLCJyZWRhY3Rpb24iOiJzZWNyZXRzLWFuZC1jcmVkZW50aWFscyIsIm1heE91dHB1dEJ5dGVzIjo2NTUzNn0sInByb2ZpbGVzIjpbImVkaXQiLCJjaGFuZ2UiLCJtZXJnZSIsIm5pZ2h0bHkiLCJyZWxlYXNlIl0sImFwcGxpZXNPbmNlUHJvZHVjdEZpbGVzIjpbeyJwYXRoIjoidGVzdC9jbGktYm91bmRhcnkuanNvbiIsIm5hbWUiOiJjb21tYW5kIHRhYmxlIn1dfQ==
+          FORGE_CI_PROFILE: change
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    needs:
+      - prepare
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create isolated toolchain directory
+        env:
+          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
+        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
+      - name: Set up accepted toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        with:
+          version: 2026.10.12
+          cache: false
+          add_shims_to_path: false
+          working_directory: ${{ runner.temp }}/forge-toolchain
+        env:
+          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
+          MISE_NO_AUTO_INSTALL: "1"
+          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
+      - name: "prepare: cli: cli.build"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5idWlsZCIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImJ1aWxkIiwic3JjL2NsaS50cyIsIi0tb3V0ZGlyIiwiZGlzdCIsIi0tdGFyZ2V0IiwiYnVuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6OTAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MjA0OCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.build"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5idWlsZCIsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImJ1aWxkIiwic3JjL2NsaS50cyIsIi0tb3V0ZGlyIiwiZGlzdCIsIi0tdGFyZ2V0IiwiYnVuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6OTAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MjA0OCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: change
+  code-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    needs:
+      - prepare
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create isolated toolchain directory
+        env:
+          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
+        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
+      - name: Set up accepted toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        with:
+          version: 2026.10.12
+          cache: false
+          add_shims_to_path: false
+          working_directory: ${{ runner.temp }}/forge-toolchain
+        env:
+          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
+          MISE_NO_AUTO_INSTALL: "1"
+          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
+      - name: "prepare: cli: cli.code-scan"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5jb2RlLXNjYW4iLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJ4IiwiZXNsaW50IiwiLS1jb25maWciLCIuZm9yZ2UvY2hlY2tzL2VzbGludC1zZWN1cml0eS5jb25maWcuanMiLCItLW5vLWlubGluZS1jb25maWciLCItLW1heC13YXJuaW5ncyIsIjAiLCIuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.code-scan"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5jb2RlLXNjYW4iLCJleGVjdXRhYmxlIjoiYnVuIiwiYXJndiI6WyJ4IiwiZXNsaW50IiwiLS1jb25maWciLCIuZm9yZ2UvY2hlY2tzL2VzbGludC1zZWN1cml0eS5jb25maWcuanMiLCItLW5vLWlubGluZS1jb25maWciLCItLW1heC13YXJuaW5ncyIsIjAiLCIuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJidW4iLCJhcmd2IjpbImluc3RhbGwiLCItLWZyb3plbi1sb2NrZmlsZSJdLCJtYW5pZmVzdHMiOlsicGFja2FnZS5qc29uIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXX0=
+          FORGE_CI_PROFILE: change
+      - name: "change: repository: forge-release.secret-scan"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImZvcmdlLXJlbGVhc2Uuc2VjcmV0LXNjYW4iLCJleGVjdXRhYmxlIjoiZ2l0bGVha3MiLCJhcmd2IjpbImRpciIsIi1jIiwiLmZvcmdlL2NoZWNrcy9naXRsZWFrcy50b21sIiwiLS1pZ25vcmUtZ2l0bGVha3MtYWxsb3ciLCItLXJlZGFjdCIsIi0tbm8tYmFubmVyIiwiLS1uby1jb2xvciIsIi0tZXhpdC1jb2RlIiwiMSIsIi1mIiwidGVtcGxhdGUiLCItLXJlcG9ydC10ZW1wbGF0ZSIsIi5mb3JnZS9jaGVja3MvZ2l0bGVha3MtcmVwb3J0LnRtcGwiLCItciIsIi0iLCIuIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sImFsbG93ZWRFbnZOYW1lcyI6W10sInJlcXVpcmVkU2VjcmV0UmVmZXJlbmNlTmFtZXMiOltdLCJoYXJkVGltZW91dE1zIjo2MDAwMDAsInNpZGVFZmZlY3RDbGFzcyI6InJlYWQtb25seSIsInJlc291cmNlVmVjdG9yIjp7ImNwdVdlaWdodCI6MSwibWVtb3J5TWlCIjoxMDI0LCJpb1dlaWdodCI6MSwiZG9ja2VyV2VpZ2h0IjowLCJicm93c2VyU2xvdHMiOjAsImxpdmVNb2RlbFNsb3RzIjowfSwiZXZpZGVuY2UiOnsiY2FwdHVyZVN0ZG91dCI6dHJ1ZSwiY2FwdHVyZVN0ZGVyciI6dHJ1ZSwicmVkYWN0aW9uIjoic2VjcmV0cy1hbmQtY3JlZGVudGlhbHMiLCJtYXhPdXRwdXRCeXRlcyI6MjYyMTQ0fSwicHJvZmlsZXMiOlsiY2hhbmdlIiwibWVyZ2UiLCJuaWdodGx5IiwicmVsZWFzZSJdfQ==
+          FORGE_CI_PROFILE: change
+  supply-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    needs:
+      - prepare
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Create isolated toolchain directory
+        env:
+          FORGE_TOOLCHAIN: eyJidW4iOiIxLjQuMiIsImFxdWE6Z2l0bGVha3MvZ2l0bGVha3MiOiI4LjMwLjEiLCJub2RlIjoiMjIuMjMuMiIsImFxdWE6Z29vZ2xlL29zdi1zY2FubmVyIjoiMi42LjAiLCJhcXVhOmFuY2hvcmUvc3lmdCI6IjEuNTQuMSJ9
+        run: "node -e 'const fs = require(\"node:fs\"); const path = require(\"node:path\"); const tools = JSON.parse(Buffer.from(process.env.FORGE_TOOLCHAIN, \"base64\").toString()); const dir = path.join(process.env.RUNNER_TEMP, \"forge-toolchain\"); fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, \"mise.toml\"), \"[tools]\\n\" + Object.entries(tools).sort(([a], [b]) => a.localeCompare(b)).map(([name, version]) => JSON.stringify(name) + \" = \" + JSON.stringify(version)).join(\"\\n\") + \"\\n\");'"
+      - name: Set up accepted toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c
+        with:
+          version: 2026.10.12
+          cache: false
+          add_shims_to_path: false
+          working_directory: ${{ runner.temp }}/forge-toolchain
+        env:
+          MISE_GLOBAL_CONFIG_FILE: ${{ runner.temp }}/forge-toolchain/mise.toml
+          MISE_NO_AUTO_INSTALL: "1"
+          MISE_TRUSTED_CONFIG_PATHS: ${{ runner.temp }}/forge-toolchain
+      - name: "base: cli: cli.dependency-scan"
+        run: node .forge/ci/run-command.mjs base
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5kZXBlbmRlbmN5LXNjYW4iLCJleGVjdXRhYmxlIjoibm9kZSIsImFyZ3YiOlsiLmZvcmdlL2NoZWNrcy9kZXBlbmRlbmN5LXNjYW4ubWpzIiwianVkZ2UiLCItLWxvY2tmaWxlIiwiYnVuLmxvY2siLCItLWZhaWwtb24iLCJoaWdoIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJub2RlIiwiYXJndiI6WyItLXVzZS1zeXN0ZW0tY2EiLCIuZm9yZ2UvY2hlY2tzL2RlcGVuZGVuY3ktc2Nhbi5tanMiLCJmZXRjaCIsIi0tbG9ja2ZpbGUiLCJidW4ubG9jayJdLCJuZXR3b3JrSG9zdHMiOlsib3N2LXZ1bG5lcmFiaWxpdGllcy5zdG9yYWdlLmdvb2dsZWFwaXMuY29tIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwic2FuZGJveE1lbW9yeU1pQiI6MTAyNCwiYmFzZUZpbGVzIjpbImJ1bi5sb2NrIl19
+          FORGE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+      - name: "prepare: cli: cli.dependency-scan"
+        run: node .forge/ci/run-command.mjs prepare
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5kZXBlbmRlbmN5LXNjYW4iLCJleGVjdXRhYmxlIjoibm9kZSIsImFyZ3YiOlsiLmZvcmdlL2NoZWNrcy9kZXBlbmRlbmN5LXNjYW4ubWpzIiwianVkZ2UiLCItLWxvY2tmaWxlIiwiYnVuLmxvY2siLCItLWZhaWwtb24iLCJoaWdoIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJub2RlIiwiYXJndiI6WyItLXVzZS1zeXN0ZW0tY2EiLCIuZm9yZ2UvY2hlY2tzL2RlcGVuZGVuY3ktc2Nhbi5tanMiLCJmZXRjaCIsIi0tbG9ja2ZpbGUiLCJidW4ubG9jayJdLCJuZXR3b3JrSG9zdHMiOlsib3N2LXZ1bG5lcmFiaWxpdGllcy5zdG9yYWdlLmdvb2dsZWFwaXMuY29tIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwic2FuZGJveE1lbW9yeU1pQiI6MTAyNCwiYmFzZUZpbGVzIjpbImJ1bi5sb2NrIl19
+          FORGE_CI_PROFILE: prepare
+      - name: "change: cli: cli.dependency-scan"
+        run: node .forge/ci/run-command.mjs run
+        env:
+          FORGE_CI_COMMAND: eyJpZCI6ImNsaS5kZXBlbmRlbmN5LXNjYW4iLCJleGVjdXRhYmxlIjoibm9kZSIsImFyZ3YiOlsiLmZvcmdlL2NoZWNrcy9kZXBlbmRlbmN5LXNjYW4ubWpzIiwianVkZ2UiLCItLWxvY2tmaWxlIiwiYnVuLmxvY2siLCItLWZhaWwtb24iLCJoaWdoIl0sIndvcmtpbmdEaXJlY3RvcnkiOnsiYmFzZSI6IndvcmtzcGFjZSIsInJlbGF0aXZlUGF0aCI6Ii4ifSwiZW52aXJvbm1lbnRDbGFzcyI6InRydXN0ZWQtaG9zdCIsInBlcm1pc3Npb25zIjp7ImRvY2tlciI6ZmFsc2UsImJyb3dzZXIiOmZhbHNlLCJuZXR3b3JrIjpmYWxzZSwibG9vcGJhY2siOmZhbHNlLCJ3b3Jrc3BhY2VXcml0ZSI6ZmFsc2UsImV4dGVybmFsIjpmYWxzZX0sInByZXBhcmF0aW9uIjp7Im5ldHdvcmsiOnRydWUsImV4ZWN1dGFibGUiOiJub2RlIiwiYXJndiI6WyItLXVzZS1zeXN0ZW0tY2EiLCIuZm9yZ2UvY2hlY2tzL2RlcGVuZGVuY3ktc2Nhbi5tanMiLCJmZXRjaCIsIi0tbG9ja2ZpbGUiLCJidW4ubG9jayJdLCJuZXR3b3JrSG9zdHMiOlsib3N2LXZ1bG5lcmFiaWxpdGllcy5zdG9yYWdlLmdvb2dsZWFwaXMuY29tIl19LCJhbGxvd2VkRW52TmFtZXMiOltdLCJyZXF1aXJlZFNlY3JldFJlZmVyZW5jZU5hbWVzIjpbXSwiaGFyZFRpbWVvdXRNcyI6NjAwMDAwLCJzaWRlRWZmZWN0Q2xhc3MiOiJyZWFkLW9ubHkiLCJyZXNvdXJjZVZlY3RvciI6eyJjcHVXZWlnaHQiOjEsIm1lbW9yeU1pQiI6MTAyNCwiaW9XZWlnaHQiOjEsImRvY2tlcldlaWdodCI6MCwiYnJvd3NlclNsb3RzIjowLCJsaXZlTW9kZWxTbG90cyI6MH0sImV2aWRlbmNlIjp7ImNhcHR1cmVTdGRvdXQiOnRydWUsImNhcHR1cmVTdGRlcnIiOnRydWUsInJlZGFjdGlvbiI6InNlY3JldHMtYW5kLWNyZWRlbnRpYWxzIiwibWF4T3V0cHV0Qnl0ZXMiOjI2MjE0NH0sInByb2ZpbGVzIjpbImNoYW5nZSIsIm1lcmdlIiwibmlnaHRseSIsInJlbGVhc2UiXSwic2FuZGJveE1lbW9yeU1pQiI6MTAyNCwiYmFzZUZpbGVzIjpbImJ1bi5sb2NrIl19
+          FORGE_CI_PROFILE: change
+      - name: Retain scan reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: forge-change-supply-chain
+          path: .forge/ci-evidence/reports/
+          if-no-files-found: ignore
+          retention-days: 7

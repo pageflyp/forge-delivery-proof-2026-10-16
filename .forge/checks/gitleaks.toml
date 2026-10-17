@@ -1,0 +1,5 @@
+title = "Forge secret scan"
+# Forge owns this file. The scan uses the default rules and nothing else.
+
+[extend]
+useDefault = true

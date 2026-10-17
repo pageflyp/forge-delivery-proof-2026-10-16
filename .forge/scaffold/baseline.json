@@ -1,0 +1,488 @@
+{
+  "schemaVersion": 1,
+  "effectiveItems": [
+    {
+      "outcomeId": "platform.scaffold.records",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.assurance.records",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.environment.placement",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.runtime.definition",
+      "level": "locked",
+      "source": "platform",
+      "status": "not-applicable",
+      "reason": "No selected component has the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.guidance.entrypoint",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.standards.packet",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.environment.example",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.secrets.none-tracked",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.commands.catalogue-only",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.gate.single-entrypoint",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.deviation.limits",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "platform.protected-paths",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": [],
+      "value": [
+        ".claude/settings.json",
+        ".forge/README.md",
+        ".forge/assurance/ci-profile.json",
+        ".forge/assurance/release-qualification.json",
+        ".forge/checks/cli-boundary/cli-matrix.json",
+        ".forge/checks/cli-boundary/cli-runner.mjs",
+        ".forge/checks/cosign-signing-config.json",
+        ".forge/checks/coverage-floor.ts",
+        ".forge/checks/dependency-scan.mjs",
+        ".forge/checks/eslint-security.config.js",
+        ".forge/checks/gitleaks-report.tmpl",
+        ".forge/checks/gitleaks.toml",
+        ".forge/checks/osv-scanner.toml",
+        ".forge/checks/syft-bill-of-materials.tmpl",
+        ".forge/checks/syft.yaml",
+        ".forge/ci/run-command.mjs",
+        ".forge/hooks/protected-paths.mjs",
+        ".forge/scaffold/baseline.json",
+        ".forge/standards/README.md",
+        ".github/workflows/forge-change.yml",
+        ".github/workflows/forge-release.yml",
+        ".gitleaksignore",
+        "eslint.config.js",
+        "tsconfig.json"
+      ]
+    },
+    {
+      "outcomeId": "platform.inspect-and-ignore",
+      "level": "locked",
+      "source": "platform",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "repository.ignore.entries",
+      "level": "required",
+      "source": "forge",
+      "value": [
+        "dependencies",
+        "build-output",
+        "coverage-output",
+        "runtime-dotenv",
+        "editor-files"
+      ],
+      "fileSettings": [
+        {
+          "path": ".gitignore",
+          "format": "lines",
+          "keyPath": [],
+          "entries": {
+            "dependencies": [
+              "node_modules/"
+            ],
+            "build-output": [
+              "dist/"
+            ],
+            "coverage-output": [
+              "coverage/"
+            ],
+            "runtime-dotenv": [
+              ".env",
+              ".env.*"
+            ],
+            "editor-files": [
+              ".vscode/",
+              ".idea/"
+            ]
+          },
+          "comparator": "superset"
+        }
+      ],
+      "status": "bound",
+      "enforcedBy": [
+        "setting:.gitignore"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "repository.lockfile.frozen-install",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "file:bun.lock",
+        "preparation-argument:--frozen-lockfile"
+      ],
+      "preparationArguments": [
+        "--frozen-lockfile"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "change-flow.outside-agent-hooks",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "file:.claude/settings.json",
+        "file:.forge/hooks/protected-paths.mjs"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "test.roles.declared",
+      "level": "required",
+      "source": "forge",
+      "value": [
+        "unit"
+      ],
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.boundary",
+        "command:cli.unit"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "test.integration.runs",
+      "level": "default",
+      "source": "forge",
+      "status": "unchecked",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "test.unit.coverage.minimum",
+      "level": "required",
+      "source": "forge",
+      "value": 0.9,
+      "counters": [
+        "lines"
+      ],
+      "valueArguments": [
+        {
+          "commandId": "cli.coverage",
+          "flag": "--floor",
+          "form": "own-argument",
+          "scale": "share",
+          "counter": "lines",
+          "comparator": "at-least"
+        }
+      ],
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.coverage"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "test.end-to-end.runs",
+      "level": "default",
+      "source": "forge",
+      "status": "unchecked",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "quality.format.check",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.format-check"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "quality.lint.zero-warnings",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.lint"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "quality.types.strict",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.type-check"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "quality.build.succeeds",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.build"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "ci.stage.static-checks",
+      "level": "required",
+      "source": "forge",
+      "value": "edit",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.stage.build",
+      "level": "required",
+      "source": "forge",
+      "value": "change",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.stage.integration-test",
+      "level": "default",
+      "source": "forge",
+      "value": "merge",
+      "status": "unchecked",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.stage.end-to-end-test",
+      "level": "default",
+      "source": "forge",
+      "value": "nightly",
+      "status": "unchecked",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.stage.code-security",
+      "level": "required",
+      "source": "forge",
+      "value": "change",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.stage.supply-chain",
+      "level": "required",
+      "source": "forge",
+      "value": "change",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.stage.maintenance",
+      "level": "default",
+      "source": "forge",
+      "status": "unchecked",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ci.provider",
+      "level": "default",
+      "source": "forge",
+      "value": "github-actions",
+      "status": "unchecked",
+      "enforcedBy": [],
+      "reason": "The default is github-actions: GitHub delivery is on and the repository binding holds a GitHub source URL."
+    },
+    {
+      "outcomeId": "ci.dependency-scan.threshold",
+      "level": "default",
+      "source": "forge",
+      "value": "high",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.dependency-scan"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "ci.artifact.identity",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.package"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "ci.licence-scan.allow",
+      "level": "default",
+      "source": "forge",
+      "value": [
+        "0BSD",
+        "Apache-2.0",
+        "BSD-2-Clause",
+        "BSD-3-Clause",
+        "BlueOak-1.0.0",
+        "CC0-1.0",
+        "ISC",
+        "MIT",
+        "Python-2.0",
+        "Unlicense",
+        "Zlib"
+      ],
+      "status": "unchecked",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "security.code-scan",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.code-scan",
+        "command:forge-release.secret-scan"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "security.dependency-scan",
+      "level": "required",
+      "source": "forge",
+      "status": "bound",
+      "enforcedBy": [
+        "command:cli.dependency-scan"
+      ],
+      "component": "cli"
+    },
+    {
+      "outcomeId": "security.licence-scan",
+      "level": "required",
+      "source": "forge",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "security.infrastructure-scan",
+      "level": "required",
+      "source": "forge",
+      "status": "unbound",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "runtime.http-errors.problem-details",
+      "level": "default",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind api or web and the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "runtime.health.ready",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind api or web or worker and the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "runtime.logs.structured",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind api or web or worker and the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "runtime.shutdown.graceful",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind api or web or worker and the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "runtime.settings.checked",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind api or web or worker and the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "runtime.jobs.retry-dead-letter",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind worker and the placement target kind runtime.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ui.design.source",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind static-web or web.",
+      "enforcedBy": []
+    },
+    {
+      "outcomeId": "ui.design.files",
+      "level": "required",
+      "source": "forge",
+      "status": "not-applicable",
+      "reason": "No selected component has the kind static-web or web.",
+      "enforcedBy": []
+    }
+  ]
+}
