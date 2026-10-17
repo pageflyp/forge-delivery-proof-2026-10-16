@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "product": "generated-product",
+  "run": { "argv": ["bun", "{repo}/src/cli.ts"] },
+  "timeoutMs": 5000,
+  "noArgs": "usage",
+  "stdin": "unsupported",
+  "subcommands": false,
+  "acceptsUnknownFlags": false,
+  "declaredFlags": [],
+  "declaredEnv": [],
+  "writes": [],
+  "commands": [
+    {
+      "id": "greet",
+      "kind": "read",
+      "argv": ["{name}"],
+      "args": [
+        { "name": "name", "type": "string", "required": true, "max": 100 }
+      ],
+      "example": {
+        "values": { "name": "Forge" },
+        "exit": 0,
+        "stdout": "^Hello Forge\\n$"
+      }
+    }
+  ]
+}
