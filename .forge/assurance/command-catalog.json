@@ -1,11 +1,11 @@
 {
-  "id": "7db4e9be-fce2-4163-82c7-05f690da466c",
-  "releaseId": "3e03f755-7533-4eae-920e-bf3fb1c4748d",
+  "id": "f4ba9430-7d45-42bb-8bfb-3f96ad1ac668",
+  "releaseId": "bd77d371-81ad-477f-a84e-a05a35e088ac",
   "revision": 1,
   "status": "accepted",
   "policyRevision": "component-stack-validation@1",
   "policyHash": "sha256:2905850bd55ffab69e929607dba0cf7d2891c208b5d73abd2b9cf37d098d9c6d",
-  "contentHash": "sha256:d8842b417d2dc4feb4709b6a6d5fb5d483bd271e4c7e51027583672363945816",
+  "contentHash": "sha256:88b2d0afce3e7a0799c35b37744ebee99839e49b172b2092b5eccc4d5a8bf431",
   "supersedesRevisionId": null,
   "provenance": {
     "kind": "brownfield-discovery",
